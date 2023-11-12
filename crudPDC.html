@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Plan de Cuentas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <h2>Crear cuenta</h2>
+
+    <form id="addForm">
+        <h3>Agregar Nueva Cuenta</h3>
+        <p>Siglas para llenar el campo rubro:</p>
+        <ul>
+            <li>Activo = A</li>
+            <li>Pasivo = P</li>
+            <li>Patrimonio Neto = PN</li>
+            <li>Egreso = E</li>
+            <li>Ingreso = I</li>
+        </ul>
+        <label for="addRubro">Rubro:</label>
+        <input type="text" id="addRubro" name="addRubro" required placeholder="A,E,I,PN,P...">
+        <label for="addNroCuenta">Nro Cuenta:</label>
+        <input type="number" id="addNroCuenta" name="addNroCuenta" required placeholder="Numero de cuenta...">
+        <label for="addDescripcion">Descripción:</label>
+        <input type="text" id="addDescripcion" name="addDescripcion" required placeholder="Descripcion...">
+        <button type="button" onclick="addAccount()">Agregar Cuenta</button>
+    </form>
+<div class="second">
+    <h2>Lista de Plan de Cuentas</h2>
+
+    <!-- Formulario de búsqueda -->
+    <div class="buscador">
+        <form id="searchForm">
+            <label for="searchNroCuenta">Buscar por Nro Cuenta:</label>
+            <input type="text" id="searchNroCuenta" name="searchNroCuenta">
+            <button type="button" onclick="searchPlan()">Buscar</button>
+        </form>
+    </div>
+    <div class="table-container">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Rubro</th>
+                    <th>Nro Cuenta</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+</div>
+<script>
+// Mover la función searchPlan fuera del bloque DOMContentLoaded
+function addAccount() {
+    var addRubro = document.getElementById("addRubro").value.toUpperCase();
+    var addNroCuenta = document.getElementById("addNroCuenta").value;
+    var addDescripcion = document.getElementById("addDescripcion").value;
+
+    var requestData = {
+        rubro: addRubro,
+        nroCuenta: addNroCuenta,
+        descripcion: addDescripcion
+    };
+
+    // Hacer la solicitud Fetch al endpoint de la API para verificar si el número de cuenta ya existe
+    fetch("api.php?nroCuenta=" + addNroCuenta)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                // El número de cuenta ya existe, mostrar alerta
+                window.alert("Error al crear cuenta. El número de cuenta ya existe.");
+            } else {
+                // El número de cuenta no existe, proceder con la adición
+                if (addRubro === "A" || addRubro === "E" || addRubro === "I" || addRubro === "P" || addRubro === "PN") {
+                    // Hacer la solicitud Fetch al endpoint de la API para agregar una nueva cuenta
+                    fetch("api.php", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestData)
+                    })
+                    .then(response => response.json())
+                    .then(message => {
+                        alert(message.message);
+                        // Actualizar la lista después de agregar una nueva cuenta
+                        cargarDatosEnTabla();
+                    })
+                    .catch(error => console.error("Error al agregar la cuenta:", error));
+                } else {
+                    window.alert("Error al crear cuenta. Debe ingresar un rubro válido.");
+                }
+            }
+        })
+        .catch(error => console.error("Error al verificar el número de cuenta:", error));
+        
+}
+
+function searchPlan() {
+    var searchNroCuenta = document.getElementById("searchNroCuenta").value;
+    
+    // Hacer la solicitud Fetch al endpoint de la API con el parámetro de búsqueda
+    fetch("api.php?nroCuenta=" + searchNroCuenta)
+        .then(response => response.json())
+        .then(data => {
+            // Limpiar la tabla
+            var tableBody = document.getElementById("tableBody");
+            tableBody.innerHTML = "";
+
+            // Verificar si data es un array antes de iterar
+            if (Array.isArray(data)) {
+                // Iterar sobre los datos y agregar filas a la tabla
+                data.forEach(function (row) {
+                    var tr = document.createElement("tr");
+
+                    var rubroTd = document.createElement("td");
+                    rubroTd.textContent = row.rubro;
+                    tr.appendChild(rubroTd);
+
+                    var nroCuentaTd = document.createElement("td");
+                    nroCuentaTd.textContent = row.nroCuenta;
+                    tr.appendChild(nroCuentaTd);
+
+                    var descripcionTd = document.createElement("td");
+                    descripcionTd.textContent = row.descripcion;
+                    tr.appendChild(descripcionTd);
+
+                    tableBody.appendChild(tr);
+                });
+            } else {
+                console.log("No se encontraron registros.");
+            }
+        })
+        .catch(error => console.error("Error al realizar la búsqueda:", error));
+}
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    cargarDatosEnTabla();
+});
+
+function cargarDatosEnTabla() {
+    // Hacer la solicitud Fetch al endpoint de la API para obtener todos los registros al cargar la página
+    fetch("api.php")
+        .then(response => response.json())
+        .then(data => {
+            // Obtener el elemento de la tabla
+            var tableBody = document.getElementById("tableBody");
+
+            // Limpiar la tabla antes de agregar nuevas filas
+            tableBody.innerHTML = "";
+
+            // Iterar sobre los datos y agregar filas a la tabla
+            data.forEach(function(row) {
+                var tr = document.createElement("tr");
+
+                var rubroTd = document.createElement("td");
+                rubroTd.textContent = row.rubro;
+                tr.appendChild(rubroTd);
+
+                var nroCuentaTd = document.createElement("td");
+                nroCuentaTd.textContent = row.nroCuenta;
+                tr.appendChild(nroCuentaTd);
+
+                var descripcionTd = document.createElement("td");
+                descripcionTd.textContent = row.descripcion;
+                tr.appendChild(descripcionTd);
+
+                var accionesTd = document.createElement("td");
+
+                // Botón para modificar
+                var modificarBtn = document.createElement("button");
+                modificarBtn.textContent = "Modificar";
+                modificarBtn.addEventListener("click", function() {
+                    modificarCuenta(row.nroCuenta,row.rubro,row.descripcion);
+                });
+                accionesTd.appendChild(modificarBtn);
+
+                // Botón para borrar
+                var borrarBtn = document.createElement("button");
+                borrarBtn.textContent = "Borrar";
+                borrarBtn.addEventListener("click", function() {
+                    if (confirm("¿Estás seguro de que quieres borrar esta cuenta?")) {
+                        borrarCuenta(row.nroCuenta,row.rubro);
+                    }
+                });
+                accionesTd.appendChild(borrarBtn);
+
+                tr.appendChild(accionesTd);
+
+                tableBody.appendChild(tr);
+            });
+        })
+        .catch(error => console.error("Error al obtener los datos:", error));
+}
+
+function borrarCuenta(nroCuenta, rubro) {
+    // Datos para enviar en el cuerpo de la solicitud
+    var requestData = {
+        rubro: rubro,
+        nroCuenta: nroCuenta,
+        accion: 'borrar'
+    };
+
+    // Hacer la solicitud Fetch al endpoint de la API para borrar la cuenta
+    fetch("api.php", {
+        method: 'DELETE', // Método HTTP para borrar (puedes ajustar esto según tu backend)
+        headers: {
+            'Content-Type': 'application/json', // Cambiado a JSON
+        },
+        body: JSON.stringify(requestData) // Convertir datos a JSON
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.message) {
+            alert(data.message);
+        } else {
+            console.error("Respuesta inesperada del servidor:", data);
+        }
+        // Actualizar la lista después de borrar la cuenta
+        cargarDatosEnTabla();
+    })
+    .catch(error => console.error("Error al borrar la cuenta:", error));
+}
+
+function modificarCuenta(nroCuenta, rubro, descripcion) {
+    // Abrir una nueva ventana (puedes personalizar las dimensiones según tus necesidades)
+    var popup = window.open('', 'Modificar Cuenta', 'width=400,height=300');
+
+    // Construir el contenido de la nueva ventana con los datos actuales
+    var content = `
+        <h3>Modificar Cuenta</h3>
+        <label for="modRubro">Rubro:</label>
+        <input type="text" id="modRubro" name="modRubro" value="${rubro}" required>
+        <label for="modNroCuenta">Nro Cuenta:</label>
+        <input type="number" id="modNroCuenta" name="modNroCuenta" value="${nroCuenta}" required readonly>
+        <label for="modDescripcion">Descripción:</label>
+        <input type="text" id="modDescripcion" name="modDescripcion" value="${descripcion}" required>
+        <button type="button" onclick="guardarModificacion(${nroCuenta})">Guardar Modificación</button>
+    `;
+
+    // Agregar el contenido a la nueva ventana
+    popup.document.body.innerHTML = content;
+}
+
+// Nueva función para guardar las modificaciones
+function guardarModificacion(nroCuenta) {
+    // Obtener los valores modificados de la nueva ventana
+    var modRubro = popup.document.getElementById("modRubro").value.toUpperCase();
+    var modNroCuenta = popup.document.getElementById("modNroCuenta").value;
+    var modDescripcion = popup.document.getElementById("modDescripcion").value;
+
+    // Datos para enviar en la solicitud
+    var requestData = {
+        rubro: modRubro,
+        nroCuenta: modNroCuenta,
+        descripcion: modDescripcion,
+        accion: 'modificar'
+    };
+
+    // Hacer la solicitud Fetch al endpoint de la API para modificar la cuenta
+    fetch("api.php", {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.message) {
+            alert(data.message);
+        } else {
+            console.error("Respuesta inesperada del servidor:", data);
+        }
+        // Cerrar la nueva ventana después de guardar las modificaciones
+        popup.close();
+        // Actualizar la lista después de modificar la cuenta
+        cargarDatosEnTabla();
+    })
+    .catch(error => console.error("Error al modificar la cuenta:", error));
+}
+
+function modificarCuenta(nroCuenta, rubro, descripcion) {
+    // Abrir una nueva ventana (puedes personalizar las dimensiones según tus necesidades)
+    var popup = window.open('', 'Modificar Cuenta', 'width=400,height=300');
+
+    // Construir el contenido de la nueva ventana con los datos actuales
+    var content = `
+        <h3>Modificar Cuenta</h3>
+        <label for="modRubro">Rubro:</label>
+        <input type="text" id="modRubro" name="modRubro" value="${rubro}" required>
+        <label for="modNroCuenta">Nro Cuenta:</label>
+        <input type="number" id="modNroCuenta" name="modNroCuenta" value="${nroCuenta}" required readonly>
+        <label for="modDescripcion">Descripción:</label>
+        <input type="text" id="modDescripcion" name="modDescripcion" value="${descripcion}" required>
+        <button type="button" onclick="guardarModificacion(${nroCuenta})">Guardar Modificación</button>
+    `;
+
+    // Agregar el contenido a la nueva ventana
+    popup.document.body.innerHTML = content;
+}
+
+var popup;
+
+// Mover la función guardarModificacion fuera de la función modificarCuenta
+function guardarModificacion(nroCuenta) {
+    // Obtener los valores modificados de la nueva ventana
+    var modRubro = popup.document.getElementById("modRubro").value.toUpperCase();
+    var modNroCuenta = popup.document.getElementById("modNroCuenta").value;
+    var modDescripcion = popup.document.getElementById("modDescripcion").value;
+
+    // Datos para enviar en la solicitud
+    var requestData = {
+        rubro: modRubro,
+        nroCuenta: modNroCuenta,
+        descripcion: modDescripcion,
+        accion: 'modificar'
+    };
+
+    // Hacer la solicitud Fetch al endpoint de la API para modificar la cuenta
+    fetch("api.php", {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.message) {
+            alert(data.message);
+        } else {
+            console.error("Respuesta inesperada del servidor:", data);
+        }
+        // Cerrar la nueva ventana después de guardar las modificaciones
+        popup.close();
+        // Actualizar la lista después de modificar la cuenta
+        cargarDatosEnTabla();
+    })
+    .catch(error => console.error("Error al modificar la cuenta:", error));
+}
+
+function modificarCuenta(nroCuenta, rubro, descripcion) {
+    // Abrir una nueva ventana (puedes personalizar las dimensiones según tus necesidades)
+    popup = window.open('', 'Modificar Cuenta', 'width=400,height=300');
+
+    // Construir el contenido de la nueva ventana con los datos actuales
+    var content = `
+        <h3>Modificar Cuenta</h3>
+        <label for="modRubro">Rubro:</label>
+        <input type="text" id="modRubro" name="modRubro" value="${rubro}" required>
+        <label for="modNroCuenta">Nro Cuenta:</label>
+        <input type="number" id="modNroCuenta" name="modNroCuenta" value="${nroCuenta}" required readonly>
+        <label for="modDescripcion">Descripción:</label>
+        <input type="text" id="modDescripcion" name="modDescripcion" value="${descripcion}" required>
+        <button type="button" onclick="guardarModificacion(${nroCuenta})">Guardar Modificación</button>
+    `;
+
+    // Agregar el contenido a la nueva ventana
+    popup.document.body.innerHTML = content;
+}
+
+/*function modificarCuenta(nroCuenta,rubro,descripcion) {
+    // Datos para enviar en el cuerpo de la solicitud
+    var requestData = {
+        descripcion:descripcion,
+        nroCuenta: nroCuenta,
+        rubro:rubro,
+        accion: 'modificar'
+    };
+
+    // Hacer la solicitud Fetch al endpoint de la API para modificar la cuenta
+    fetch("api.php", {
+        method: 'PUT', // Método HTTP para modificar (puedes ajustar esto según tu backend)
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData) // Convertir datos a JSON
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.message) {
+            alert(data.message);
+        } else {
+            console.error("Respuesta inesperada del servidor:", data);
+        }
+        // Actualizar la lista después de modificar la cuenta
+        cargarDatosEnTabla();
+    })
+    .catch(error => console.error("Error al modificar la cuenta:", error));
+}*/
+
+</script>
+
+</body>
+</html>
