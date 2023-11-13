@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modificar Cuenta</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
     <h1>PLAN DE CUENTA</h1>
@@ -51,7 +51,7 @@
                 };
 
                 // Hacer la solicitud Fetch al endpoint de la API para modificar la cuenta
-                fetch("api.php", {
+                fetch("apiPlanDeCuentas.php", {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -69,7 +69,7 @@
                     console.log("modNroCuenta:", modNroCuenta);
                     console.log("modDescripcion:", modDescripcion);
                     // Cerrar la ventana después de guardar las modificaciones
-                    window.location.href = `crudPDC.html`;
+                    window.location.href = `crudPlanDeCuenta.html`;
                     // Puedes redirigir a otra página si lo deseas
                 })
                 .catch(error => console.error("Error al modificar la cuenta:", error));

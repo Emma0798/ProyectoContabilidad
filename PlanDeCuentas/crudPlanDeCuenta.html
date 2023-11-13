@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Plan de Cuentas</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
     <h1>PLAN DE CUENTA</h1>
@@ -67,7 +67,7 @@ function addAccount() {
     };
 
     // Hacer la solicitud Fetch al endpoint de la API para verificar si el número de cuenta ya existe
-    fetch("api.php?nroCuenta=" + addNroCuenta)
+    fetch("apiPlanDeCuentas.php?nroCuenta=" + addNroCuenta)
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
@@ -77,7 +77,7 @@ function addAccount() {
                 // El número de cuenta no existe, proceder con la adición
                 if (addRubro === "A" || addRubro === "E" || addRubro === "I" || addRubro === "P" || addRubro === "PN") {
                     // Hacer la solicitud Fetch al endpoint de la API para agregar una nueva cuenta
-                    fetch("api.php", {
+                    fetch("apiPlanDeCuentas.php", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ function searchPlan() {
     var searchNroCuenta = document.getElementById("searchNroCuenta").value;
     
     // Hacer la solicitud Fetch al endpoint de la API con el parámetro de búsqueda
-    fetch("api.php?nroCuenta=" + searchNroCuenta)
+    fetch("apiPlanDeCuentas.php?nroCuenta=" + searchNroCuenta)
         .then(response => response.json())
         .then(data => {
             // Limpiar la tabla
@@ -129,6 +129,30 @@ function searchPlan() {
                     descripcionTd.textContent = row.descripcion;
                     tr.appendChild(descripcionTd);
 
+                    var accionesTd = document.createElement("td");
+
+                    // Botón para modificar
+                    var modificarBtn = document.createElement("button");
+                    modificarBtn.textContent = "Modificar";
+                    modificarBtn.addEventListener("click", function() {
+                        // Llamar a la función para modificar
+                        modificarCuenta(row.nroCuenta, row.rubro, row.descripcion);
+                    });
+                    accionesTd.appendChild(modificarBtn);
+
+                    // Botón para borrar
+                    var borrarBtn = document.createElement("button");
+                    borrarBtn.textContent = "Borrar";
+                    borrarBtn.addEventListener("click", function() {
+                        if (confirm("¿Estás seguro de que quieres borrar esta cuenta?")) {
+                            // Llamar a la función para borrar
+                            borrarCuenta(row.nroCuenta, row.rubro);
+                        }
+                    });
+                    accionesTd.appendChild(borrarBtn);
+
+                    tr.appendChild(accionesTd);
+
                     tableBody.appendChild(tr);
                 });
             } else {
@@ -139,13 +163,14 @@ function searchPlan() {
 }
 
 
+
 document.addEventListener("DOMContentLoaded", function() {
     cargarDatosEnTabla();
 });
 
 function cargarDatosEnTabla() {
     // Hacer la solicitud Fetch al endpoint de la API para obtener todos los registros al cargar la página
-    fetch("api.php")
+    fetch("apiPlanDeCuentas.php")
         .then(response => response.json())
         .then(data => {
             // Obtener el elemento de la tabla
@@ -208,7 +233,7 @@ function borrarCuenta(nroCuenta, rubro) {
     };
 
     // Hacer la solicitud Fetch al endpoint de la API para borrar la cuenta
-    fetch("api.php", {
+    fetch("apiPlanDeCuentas.php", {
         method: 'DELETE', // Método HTTP para borrar (puedes ajustar esto según tu backend)
         headers: {
             'Content-Type': 'application/json', // Cambiado a JSON
@@ -231,7 +256,7 @@ function borrarCuenta(nroCuenta, rubro) {
 
 function modificarCuenta(nroCuenta, rubro, descripcion) {
     // Redirigir a putPDC.html con los parámetros necesarios
-    window.location.href = `putPDC.html?nroCuenta=${nroCuenta}&rubro=${rubro}&descripcion=${descripcion}`;
+    window.location.href = `putPlanDeCuenta.html?nroCuenta=${nroCuenta}&rubro=${rubro}&descripcion=${descripcion}`;
 
 }
 

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alta de Asientos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <h2>Alta de Asientos</h2>
+
+    <form id="asientoForm">
+        <label for="nroAsiento">Nro Asiento:</label>
+        <input type="text" id="nroAsiento" name="nroAsiento" required>
+
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha" required>
+
+        <label for="nroCuenta">Nro Cuenta:</label>
+        <input type="text" id="nroCuenta" name="nroCuenta" required>
+
+        <label for="descripcion">Descripción:</label>
+        <input type="text" id="descripcion" name="descripcion" required>
+
+        <label for="debe">Debe:</label>
+        <input type="number" id="debe" name="debe" required>    
+
+        <label for="haber">Haber:</label>
+        <input type="number" id="haber" name="haber" required>
+
+        <button type="button" onclick="guardarAsiento()">Guardar Asiento</button>
+    </form>
+
+    <script>
+        function guardarAsiento() {
+            // Obtener los valores ingresados
+            const nroAsiento = document.getElementById('nroAsiento').value;
+            const fecha = document.getElementById('fecha').value;
+            const nroCuenta = document.getElementById('nroCuenta').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const debe = document.getElementById('debe').value;
+            const haber = document.getElementById('haber').value;
+
+            // Aquí puedes realizar validaciones adicionales si es necesario
+
+            // Crear un objeto con los datos del asiento
+            const asientoData = {
+                nroAsiento: nroAsiento,
+                fecha: fecha,
+                nroCuenta: nroCuenta,
+                descripcion: descripcion,
+                debe: debe,
+                haber: haber
+            };
+
+            // Enviar los datos al servidor (puedes usar Fetch o alguna librería como Axios)
+            // fetch('url_del_endpoint', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(asientoData),
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     // Manejar la respuesta del servidor
+            //     console.log(data);
+            // })
+            // .catch(error => console.error('Error al enviar datos:', error));
+        }
+    </script>
+
+</body>
+</html>
