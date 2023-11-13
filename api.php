@@ -184,7 +184,7 @@ switch ($method) {
         $nroCuenta = (int)$putData['nroCuenta'];
         $descripcion = $conn->real_escape_string($putData['descripcion']);
 
-        $updateQuery = "UPDATE plan_de_cuentas SET descripcion='$descripcion' WHERE rubro='$rubro' AND nroCuenta=$nroCuenta";
+        $updateQuery = "UPDATE plan_de_cuentas SET rubro='$rubro', descripcion='$descripcion' WHERE  nroCuenta=$nroCuenta";
 
         if ($conn->query($updateQuery) === TRUE) {
             echo json_encode(["message" => "Registro actualizado con éxito."]);

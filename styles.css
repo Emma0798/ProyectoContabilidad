@@ -1,11 +1,13 @@
 body {
     font-family: Arial, sans-serif;
     /*margin: 20px;*/
+    
 }
 
 h2 {
     color: #333;
     text-align: center;
+    
 }
 
 table {
@@ -64,10 +66,18 @@ li {
     margin-bottom: 5px;
 }
 
-.second {
-    padding: 0;
-    margin: 0;
+.put {
+    padding: 1em;
+    margin: 0 auto; /* Esto centra el div horizontalmente */
     background-color: rgba(211, 211, 211, 0.5);
+    max-width: 400px; /* Puedes ajustar esto según el ancho deseado */
+}
+
+.second {
+    padding: 1em;
+    margin: 0 auto; /* Esto centra el div horizontalmente */
+    background-color: rgba(211, 211, 211, 0.5);
+    
 }
 
 .table-container {
@@ -84,3 +94,15 @@ li {
     display: inline-block;
 }
   
+h1{
+    margin:0;
+    padding: 1em;
+    text-align: center;
+    background-color: rgba(211, 211, 211, 0.5);
+}
+
+.put input {
+    width: 100%; /* Esto hace que los inputs ocupen el 100% del ancho del contenedor */
+    box-sizing: border-box; /* Esto asegura que el ancho incluya el relleno y el borde */
+    margin-bottom: 10px; /* Esto añade espacio entre los inputs */
+}

@@ -7,20 +7,20 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <h1>PLAN DE CUENTA</h1>
+    <h2>Modificar Cuenta</h2>
+    <div class="put">
+        <label for="modNroCuenta">Nro Cuenta:</label>
+        <input type="number" id="modNroCuenta" name="modNroCuenta" readonly required><br>
 
-    <h3>Modificar Cuenta</h3>
-
-    <label for="modRubro">Rubro:</label>
-    <input type="text" id="modRubro" name="modRubro" required>
-    
-    <label for="modNroCuenta">Nro Cuenta:</label>
-    <input type="number" id="modNroCuenta" name="modNroCuenta" readonly required>
-    
-    <label for="modDescripcion">Descripción:</label>
-    <input type="text" id="modDescripcion" name="modDescripcion" required>
-    
-    <button type="button" onclick="guardarModificacion()">Guardar Modificación</button>
-
+        <label for="modRubro">Rubro:</label>
+        <input type="text" id="modRubro" name="modRubro" required><br>
+        
+        <label for="modDescripcion">Descripción:</label>
+        <input type="text" id="modDescripcion" name="modDescripcion" required><br>
+        
+        <button type="button" onclick="guardarModificacion()">Guardar Modificación</button>
+    </div>
     <script>
         // Obtener parámetros de la URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -40,35 +40,42 @@
             const modNroCuenta = document.getElementById('modNroCuenta').value;
             const modDescripcion = document.getElementById('modDescripcion').value;
 
-            // Datos para enviar en la solicitud
-            const requestData = {
-                rubro: modRubro,
-                nroCuenta: modNroCuenta,
-                descripcion: modDescripcion,
-                accion: 'modificar'
-            };
+            // Validar rubro
+            if (modRubro === "A" || modRubro === "E" || modRubro === "I" || modRubro === "P" || modRubro === "PN") {
+                // Datos para enviar en la solicitud
+                const requestData = {
+                    rubro: modRubro,
+                    nroCuenta: modNroCuenta,
+                    descripcion: modDescripcion,
+                    accion: 'modificar'
+                };
 
-            // Hacer la solicitud Fetch al endpoint de la API para modificar la cuenta
-            fetch("api.php", {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.message) {
-                    alert(data.message);
-                } else {
-                    console.error("Respuesta inesperada del servidor:", data);
-                }
-                // Cerrar la ventana después de guardar las modificaciones
-                window.close();
-                // Puedes redirigir a otra página si lo deseas
-                // window.location.href = 'otra_pagina.html';
-            })
-            .catch(error => console.error("Error al modificar la cuenta:", error));
+                // Hacer la solicitud Fetch al endpoint de la API para modificar la cuenta
+                fetch("api.php", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.message) {
+                        alert(data.message);
+                    } else {
+                        console.error("Respuesta inesperada del servidor:", data);
+                    }
+                    console.log("modRubro:", modRubro);
+                    console.log("modNroCuenta:", modNroCuenta);
+                    console.log("modDescripcion:", modDescripcion);
+                    // Cerrar la ventana después de guardar las modificaciones
+                    window.location.href = `crudPDC.html`;
+                    // Puedes redirigir a otra página si lo deseas
+                })
+                .catch(error => console.error("Error al modificar la cuenta:", error));
+            } else {
+                alert("Por favor ingrese un rubro válido. Los rubros son: \n Activo=A\nPasivo=P\nPatrimonio neto=PN\nIngreso=I\nEgreso=E");
+            }
         }
     </script>
 
