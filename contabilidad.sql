@@ -29,13 +29,14 @@ SET time_zone = "+00:00";
 
 DROP TABLE IF EXISTS `libro_diario`;
 CREATE TABLE IF NOT EXISTS `libro_diario` (
+  `id` int NOT NULL,
   `nroAsiento` int NOT NULL,
   `fecha` date DEFAULT NULL,
   `debe` double DEFAULT NULL,
   `haber` double DEFAULT NULL,
   `FK_mayor` int DEFAULT NULL,
   `FK_plan_de_cuentas` int NOT NULL,
-  PRIMARY KEY (`nroAsiento`),
+  PRIMARY KEY (`id`),
   KEY `FK_mayor` (`FK_mayor`),
   KEY `FK_plan_de_cuentas` (`FK_plan_de_cuentas`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

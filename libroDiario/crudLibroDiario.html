@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alta de Asientos</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
 
@@ -12,62 +12,77 @@
 
     <form id="asientoForm">
         <label for="nroAsiento">Nro Asiento:</label>
-        <input type="text" id="nroAsiento" name="nroAsiento" required>
+        <input type="number" id="nroAsiento" name="nroAsiento">
 
         <label for="fecha">Fecha:</label>
         <input type="date" id="fecha" name="fecha" required>
 
-        <label for="nroCuenta">Nro Cuenta:</label>
-        <input type="text" id="nroCuenta" name="nroCuenta" required>
+        <button type="button" onclick="guardarAsiento()">Consultar</button>
 
-        <label for="descripcion">Descripción:</label>
-        <input type="text" id="descripcion" name="descripcion" required>
-
-        <label for="debe">Debe:</label>
-        <input type="number" id="debe" name="debe" required>    
-
-        <label for="haber">Haber:</label>
-        <input type="number" id="haber" name="haber" required>
-
-        <button type="button" onclick="guardarAsiento()">Guardar Asiento</button>
+        <table id="asientoTable">
+            <thead>
+                <tr>
+                    <th>Nro Asiento</th>
+                    <th>Descripción</th>
+                    <th>Debe</th>
+                    <th>Haber</th>
+                </tr>
+            </thead>
+            <tbody id="asientoTableBody">
+                <!-- Aquí se llenarán los datos de la base de datos -->
+            </tbody>
+        </table>
     </form>
 
     <script>
         function guardarAsiento() {
             // Obtener los valores ingresados
-            const nroAsiento = document.getElementById('nroAsiento').value;
+            
+            var nroAsiento = document.getElementById('nroAsiento').value;
             const fecha = document.getElementById('fecha').value;
-            const nroCuenta = document.getElementById('nroCuenta').value;
-            const descripcion = document.getElementById('descripcion').value;
-            const debe = document.getElementById('debe').value;
-            const haber = document.getElementById('haber').value;
-
-            // Aquí puedes realizar validaciones adicionales si es necesario
-
+            if(nroAsiento==""){
+                nroAsiento=null;
+            }
             // Crear un objeto con los datos del asiento
             const asientoData = {
                 nroAsiento: nroAsiento,
                 fecha: fecha,
-                nroCuenta: nroCuenta,
-                descripcion: descripcion,
-                debe: debe,
-                haber: haber
             };
+        console.log(asientoData);
+            // Realizar la solicitud GET para obtener los datos de la base de datos
+            fetch(`apiLibroDiario.php?fecha=${fecha}&nroAsiento=${nroAsiento}`)
+            .then(response => response.json())
+            .then(data => {
+                // Imprimir la respuesta JSON en la consola
+                console.log('Respuesta del servidor:', data);
 
-            // Enviar los datos al servidor (puedes usar Fetch o alguna librería como Axios)
-            // fetch('url_del_endpoint', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify(asientoData),
-            // })
+                // Llenar la tabla con los datos obtenidos
+                llenarTabla(data);
+            })
+            .catch(error => console.error('Error al obtener datos:', error));
+        }
+
+            // Aquí deberías realizar la solicitud GET para obtener los datos de la base de datos
+            // y luego llenar la tabla con esos datos
+            // fetch('url_del_endpoint/' + nroAsiento)
             // .then(response => response.json())
             // .then(data => {
-            //     // Manejar la respuesta del servidor
-            //     console.log(data);
+            //     // Llenar la tabla con los datos obtenidos
+            //     llenarTabla(data);
             // })
-            // .catch(error => console.error('Error al enviar datos:', error));
+            // .catch(error => console.error('Error al obtener datos:', error));
+        
+
+        function llenarTabla(data) {
+            const tableBody = document.getElementById('asientoTableBody');
+            tableBody.innerHTML = ''; // Limpiar el contenido actual de la tabla
+
+            // Iterar sobre los datos y agregar filas a la tabla
+            data.forEach(entry => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${entry.nroAsiento}</td><td>${entry.descripcion}</td><td>${entry.debe}</td><td>${entry.haber}</td>`;
+                tableBody.appendChild(row);
+            });
         }
     </script>
 
