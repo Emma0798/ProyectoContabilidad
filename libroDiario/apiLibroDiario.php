@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $fecha = isset($_GET['fecha']) ? $_GET['fecha'] : null;
     $nroAsiento = isset($_GET['nroAsiento']) ? $_GET['nroAsiento'] : null;
 
-    // Construir la consulta SQL
+    // Construir la consulta SQL hola
     $sql = "SELECT ld.nroAsiento, pdc.descripcion, ld.debe, ld.haber
             FROM libro_diario ld
             JOIN plan_de_cuentas pdc ON ld.FK_plan_de_cuentas = pdc.nroCuenta
