@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 DROP TABLE IF EXISTS `libro_diario`;
 CREATE TABLE IF NOT EXISTS `libro_diario` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `nroAsiento` int NOT NULL,
   `fecha` date DEFAULT NULL,
   `debe` double DEFAULT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `libro_diario` (
   PRIMARY KEY (`id`),
   KEY `FK_mayor` (`FK_mayor`),
   KEY `FK_plan_de_cuentas` (`FK_plan_de_cuentas`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `libro_diario`
@@ -77,7 +77,7 @@ INSERT INTO `libro_diario` (`nroAsiento`, `fecha`, `debe`, `haber`, `FK_mayor`, 
 
 DROP TABLE IF EXISTS `mayor`;
 CREATE TABLE IF NOT EXISTS `mayor` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `anio` int DEFAULT NULL,
   `mes` int DEFAULT NULL,
   `nroCuenta` varchar(255) DEFAULT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `mayor` (
   `haber` double DEFAULT NULL,
   `saldo` double DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
 
@@ -95,11 +95,11 @@ CREATE TABLE IF NOT EXISTS `mayor` (
 
 DROP TABLE IF EXISTS `plan_de_cuentas`;
 CREATE TABLE IF NOT EXISTS `plan_de_cuentas` (
-  `rubro` enum('A','E','I','P','PN') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `nroCuenta` int NOT NULL,
+  `rubro` enum('A','E','I','P','PN') CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `nroCuenta` int NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`nroCuenta`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `plan_de_cuentas`
